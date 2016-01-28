@@ -55,7 +55,7 @@ namespace timestamp
         auto send() -> void;
 
     private:
-                                   m_value;
+        T                           m_value;
         CounterType                 m_type;
         UnifiedData                 m_pattern;
         std::shared_ptr<CFactory>   m_parent;
