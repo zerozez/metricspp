@@ -1,0 +1,23 @@
+*~
+*.autosave
+*.a
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*.so.*
+.#*
+*.*#
+Makefile*
+.ropeproject
+
+# qtcreator generated files
+*.user*
+
+# Vim temporary files
+.*.swp
+
+# YCM files
+.ycm_extra_conf.py
+.ycm_extra_conf.pyc
