@@ -8,8 +8,10 @@ First step InfluxDB
 # Requirements
 
 GCC >= 4.7.2
+
 CMake >= 2.8.3
-Boost.system (using asio for preset connection realizations)
+
+Boost.system >= 1.57
 
 
 # Lincense
