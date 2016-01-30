@@ -65,7 +65,7 @@ namespace timestamp
 
     auto UnifiedData::restamp() -> void
     {
-        m_stamp = system_clock::now().time_since_epoch().count();
+        m_stamp = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count();
     }
 }
 
