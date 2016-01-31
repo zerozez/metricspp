@@ -25,82 +25,8 @@
 #ifndef TIMESTAMP_CPP_HPP
 #define TIMESTAMP_CPP_HPP
 
-#include <map>
-#include <list>
-#include <string>
-#include <memory>
-
-#include <unifieddata.hpp>
-
-
-/**
- * Pre-registered connection is influx.upd by string value
- */
-namespace timestamp
-{
-    class IDatabase;
-    class Connection;
-
-    template<class T> class Counter;
-
-
-    class CFactory : public std::enable_shared_from_this<CFactory>
-    {
-    public:
-        virtual ~CFactory();
-
-        template<class ... T>
-        static std::shared_ptr<CFactory> create( T&& ... input);
-
-        auto registerConnection(const std::string &regName,
-                                const IDatabase *db,
-                                const Connection *connection) -> void;
-
-
-        auto setupConnection(const std::string &address,
-                             const int port,
-                             const std::string &regName) -> void;
-
-        template<class T>
-        auto counter(const std::string &measurement,
-                     const std::map<std::string, std::string> tags = {},
-                     const std::string &db = "internal"
-                     ) -> std::shared_ptr<Counter<T> >;
-
-    private:
-        std::map<std::string, std::string>  m_regs;
-
-        std::shared_ptr<IDatabase>          m_db;
-        std::shared_ptr<Connection>         m_connect;
-
-    private:
-        CFactory();
-        CFactory(const CFactory &f) = default;
-
-        auto send(const UnifiedData &data) -> void;
-
-
-        template<class T>
-        friend class Counter;
-    };
-
-    template<class ... T>
-    std::shared_ptr<CFactory> CFactory::create( T&& ... input)
-    {
-        return std::shared_ptr<CFactory>(new CFactory(std::forward<T>(input)...));
-    }
-
-    template<class T>
-    auto CFactory::counter(const std::string &measurement,
-                           const std::map<std::string, std::string> tags,
-                           const std::string &db
-                 ) -> std::shared_ptr<Counter<T> >
-    {
-        return std::shared_ptr<Counter<T> >(
-                    new Counter<T>(new UnifiedData(measurement, {}, tags, db),
-                                   shared_from_this()));
-    }
-}
+#include <counter.hpp>
+#include <cfactory.hpp>
 
 #endif // TIMESTAMP_CPP_HPP
 

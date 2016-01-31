@@ -2,7 +2,6 @@
 #include <thread>
 #include <memory>
 
-#include <counter.hpp>
 #include <timestamp-c++.hpp>
 
 

@@ -25,9 +25,9 @@
 #include <string>
 #include <stdexcept>
 
+#include <cfactory.hpp>
 #include <idatabase.hpp>
 #include <connection.hpp>
-#include <timestamp-c++.hpp>
 
 // pre-register includes
 #include <influxdb.h>
