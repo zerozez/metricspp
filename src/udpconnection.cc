@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-
 #include <string>
 #include <boost/asio.hpp>
 
