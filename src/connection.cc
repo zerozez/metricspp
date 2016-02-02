@@ -22,7 +22,9 @@
  * SOFTWARE.
  */
 
+#include <regex>
 #include <string>
+#include <stdexcept>
 
 #include <connection.hpp>
 #include <connection_types.hpp>
@@ -41,7 +43,17 @@ namespace timestamp
 
     auto Connection::setAddress(const std::string &addr, const int port) -> void
     {
-        // FIXME: add validation for inputs
+        if (!std::regex_match(addr, std::regex(exp_ip)) &&
+            !std::regex_match(addr, std::regex(exp_addr)))
+        {
+            throw std::invalid_argument("[Connection] address invalid : " + addr);
+        }
+
+        if(port < 0 || port > 65536)
+        {
+            throw std::invalid_argument("[Connection] port invalid : " + std::to_string(port));
+        }
+
         m_addr  = addr;
         m_port  = port;
     }
