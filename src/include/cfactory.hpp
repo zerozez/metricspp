@@ -26,7 +26,6 @@
 #define CFACTORY_HPP
 
 #include <map>
-#include <list>
 #include <string>
 #include <memory>
 
