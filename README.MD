@@ -1,4 +1,4 @@
-# TimeStamp Library
+# TimeStamp Library [![Build Status](https://travis-ci.org/zerozez/timestamp-cpp.svg?branch=master)](https://travis-ci.org/zerozez/timestamp-cpp)
 Library for sending TS metrics from C++ applications to TS databases.
 First step InfluxDB.
 
