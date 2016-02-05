@@ -1,24 +1,19 @@
-# TimeStamp Library for C++
+# TimeStamp Library
+Library for sending TS metrics from C++ applications to TS databases.
+First step InfluxDB.
 
-Library for sending TS metrics from C++ applications
+## Requirements
+* C++11
+* CMake >= 2.8.3
+* Boost Asio
 
-First step InfluxDB
+## Examples
+Description of [examples](examples/)
+* [ex_influx.cpp](examples/ex_influx.cpp) Shows how to use predefined connection to influx by upd
+and write metric values.
 
-
-# Requirements
-
-GCC >= 4.7.2
-
-CMake >= 2.8.3
-
-Boost.system >= 1.57
-
-
-# Lincense
-
+## Lincense
 MIT
 
-
-# Author 
-
+## Author 
 Petr Orlov <zfmeze@gmail.com>
