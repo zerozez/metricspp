@@ -9,7 +9,7 @@ First step InfluxDB.
 
 ## Examples
 Description of [examples](examples/)
-* [ex_influx.cpp](examples/ex_influx.cpp) Shows how to use predefined connection to influx by upd
+* [ex_influx.cc](examples/ex_influx.cc) Shows how to use predefined connection to influx by upd
 and write metric values.
 
 ## Lincense
