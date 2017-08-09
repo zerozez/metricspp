@@ -10,7 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in
+ * all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -29,40 +30,39 @@
 
 #include <connection_types.hpp>
 
-
 namespace timestamp {
-    class Connection {
-    public:
-        Connection(ConnectionType type = ConnectionType::HTTP_API);
-        virtual ~Connection();
+class Connection {
+ public:
+  Connection(ConnectionType type = ConnectionType::HTTP_API);
+  virtual ~Connection();
 
-        auto setAddress(const std::string &addr, const int port) -> void;
-        auto type() const -> ConnectionType;
+  auto setAddress(const std::string &addr, const int port) -> void;
+  auto type() const -> ConnectionType;
 
-        virtual bool open() = 0;
-        virtual bool close() = 0;
-        virtual void send(const std::string &data) = 0;
+  virtual bool open() = 0;
+  virtual bool close() = 0;
+  virtual void send(const std::string &data) = 0;
 
-    protected:
-        auto addr() const -> std::string;
-        auto port() const -> int;
+ protected:
+  auto addr() const -> std::string;
+  auto port() const -> int;
 
-    private:
-        int             m_port;
-        std::string     m_addr;
-        ConnectionType  m_type;
+ private:
+  int m_port;
+  std::string m_addr;
+  ConnectionType m_type;
 
-        const std::string   exp_ip  = "^(\?:(\?:25[0-5]|2[0-4][0-9]|[01]"
-                                      "\?[0-9][0-9]\?)\\.){3}(\?:25[0-5]|"
-                                      "2[0-4][0-9]|[01]\?[0-9][0-9]\?)$";
+  const std::string exp_ip =
+      "^(\?:(\?:25[0-5]|2[0-4][0-9]|[01]"
+      "\?[0-9][0-9]\?)\\.){3}(\?:25[0-5]|"
+      "2[0-4][0-9]|[01]\?[0-9][0-9]\?)$";
 
-        const std::string   exp_addr = "^(\?:(\?:[a-zA-Z0-9]|[a-zA-Z0-9]"
-                                       "[a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*"
-                                       "(\?:[A-Za-z0-9]|[A-Za-z0-9]"
-                                       "[A-Za-z0-9\\-]*[A-Za-z0-9])$";
-
-    };
+  const std::string exp_addr =
+      "^(\?:(\?:[a-zA-Z0-9]|[a-zA-Z0-9]"
+      "[a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*"
+      "(\?:[A-Za-z0-9]|[A-Za-z0-9]"
+      "[A-Za-z0-9\\-]*[A-Za-z0-9])$";
+};
 }
 
-#endif // CONNECTION_HPP
-
+#endif  // CONNECTION_HPP

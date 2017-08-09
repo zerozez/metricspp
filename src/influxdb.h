@@ -10,7 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in
+ * all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -25,21 +26,18 @@
 #ifndef INFLUXDB_HPP
 #define INFLUXDB_HPP
 
-#include <idatabase.hpp>
 #include <connection_types.hpp>
+#include <idatabase.hpp>
 
+namespace timestamp {
+class InfluxDB : public IDatabase {
+ public:
+  InfluxDB();
+  virtual ~InfluxDB();
 
-namespace timestamp
-{
-    class InfluxDB : public IDatabase
-    {
-    public:
-        InfluxDB();
-        virtual ~InfluxDB();
-
-        auto format(const UnifiedData &data, ConnectionType type) const -> std::string;
-    };
+  auto format(const UnifiedData &data, ConnectionType type) const
+      -> std::string;
+};
 }
 
-#endif // INFLUXDB_HPP
-
+#endif  // INFLUXDB_HPP

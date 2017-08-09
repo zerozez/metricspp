@@ -10,7 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in
+ * all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -26,31 +27,28 @@
 #define UDPCONNECTION_H
 
 #include <memory>
+
 #include <boost/asio.hpp>
 
 #include <connection.hpp>
 
-
 namespace timestamp {
 
-    class UDPConnection : public timestamp::Connection
-    {
-    public:
-        UDPConnection();
-        virtual ~UDPConnection();
+class UDPConnection : public timestamp::Connection {
+ public:
+  UDPConnection();
+  virtual ~UDPConnection();
 
-        auto open() -> bool;
-        auto close() -> bool;
+  auto open() -> bool;
+  auto close() -> bool;
 
-        auto send(const std::string &data) -> void;
+  auto send(const std::string &data) -> void;
 
-    private:
-        std::shared_ptr<boost::asio::io_service>        m_io;
-        std::shared_ptr<boost::asio::ip::udp::endpoint> m_endpoint;
-        std::shared_ptr<boost::asio::ip::udp::socket>   m_socket;
-
-    };
+ private:
+  std::shared_ptr<boost::asio::io_service> m_io;
+  std::shared_ptr<boost::asio::ip::udp::endpoint> m_endpoint;
+  std::shared_ptr<boost::asio::ip::udp::socket> m_socket;
+};
 }
 
-#endif // UDPCONNECTION_H
-
+#endif  // UDPCONNECTION_H

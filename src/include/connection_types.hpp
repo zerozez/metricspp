@@ -10,7 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in
+ * all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -25,16 +26,8 @@
 #ifndef CONNECTION_TYPES_HPP
 #define CONNECTION_TYPES_HPP
 
-
-namespace timestamp
-{
-    enum class ConnectionType
-    {
-        HTTP_API,
-        TCP,
-        UDP
-    };
+namespace timestamp {
+enum class ConnectionType { HTTP_API, TCP, UDP };
 }
 
-#endif // CONNECTION_TYPES_HPP
-
+#endif  // CONNECTION_TYPES_HPP

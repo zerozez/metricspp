@@ -10,7 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in
+ * all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -27,39 +28,35 @@
 
 #include <map>
 
+namespace timestamp {
+using StringKeyValue = std::map<std::string, std::string>;
 
-namespace timestamp
-{
-    using StringKeyValue = std::map<std::string, std::string>;
+class UnifiedData {
+ public:
+  UnifiedData();
+  UnifiedData(const std::string &measurement,
+              const StringKeyValue &keys = StringKeyValue(),
+              const StringKeyValue &tags = StringKeyValue(),
+              const std::string &db = std::string());
 
-    class UnifiedData
-    {
-    public:
-        UnifiedData();
-        UnifiedData(const std::string &measurement,
-                    const StringKeyValue &keys = StringKeyValue(),
-                    const StringKeyValue &tags = StringKeyValue(),
-                    const std::string &db = std::string());
+  virtual ~UnifiedData();
 
-        virtual ~UnifiedData();
+  auto db() const -> std::string;
+  auto measurement() const -> std::string;
+  auto tags() const -> StringKeyValue;
+  auto keys() const -> StringKeyValue;
+  auto timestamp() const -> long long;
 
-        auto db() const -> std::string;
-        auto measurement() const -> std::string;
-        auto tags() const -> StringKeyValue;
-        auto keys() const -> StringKeyValue;
-        auto timestamp() const -> long long;
+  auto keys(const std::map<std::string, std::string> &keys) -> void;
 
-        auto keys(const std::map<std::string, std::string> &keys) -> void;
+ private:
+  long long m_stamp;
+  std::string m_db;
+  std::string m_measurement;
+  StringKeyValue m_tags;
+  StringKeyValue m_keys;
 
-    private:
-        long long       m_stamp;
-        std::string     m_db;
-        std::string     m_measurement;
-        StringKeyValue  m_tags;
-        StringKeyValue  m_keys;
-
-        auto restamp() -> void;
-    };
+  auto restamp() -> void;
+};
 }
-#endif // UNIFIEDDATA_HPP
-
+#endif  // UNIFIEDDATA_HPP

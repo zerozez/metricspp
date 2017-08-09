@@ -10,7 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in
+ * all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -27,22 +28,19 @@
 
 #include <string>
 
-#include <unifieddata.hpp>
 #include <connection_types.hpp>
+#include <unifieddata.hpp>
 
+namespace timestamp {
+class IDatabase {
+ public:
+  IDatabase() {}
+  virtual ~IDatabase() {}
 
-namespace timestamp
-{
-    class IDatabase
-    {
-    public:
-        IDatabase() {}
-        virtual ~IDatabase() {}
-
-        virtual std::string format(const UnifiedData &data,
-                                   ConnectionType type = ConnectionType::HTTP_API) const = 0;
-    };
+  virtual std::string format(
+      const UnifiedData &data,
+      ConnectionType type = ConnectionType::HTTP_API) const = 0;
+};
 }
 
-#endif // IDATABASE_H
-
+#endif  // IDATABASE_H
