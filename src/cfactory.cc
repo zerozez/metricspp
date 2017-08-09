@@ -30,9 +30,8 @@
 #include <connection.hpp>
 
 // pre-register includes
-#include <influxdb.h>
-#include <udpconnection.h>
-
+#include "influxdb.h"
+#include "udpconnection.h"
 
 namespace timestamp
 {

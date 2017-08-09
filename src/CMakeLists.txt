@@ -1,11 +1,17 @@
-include_directories( .
-                     include )
+set(Boost_USE_STATIC_LIBS       OFF)
+set(Boost_USE_MULTITHREADED      ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
 
-aux_source_directory( . SOURCES )
+find_package(Threads REQUIRED)
+find_package(Boost COMPONENTS system REQUIRED)
 
+include_directories(include ${Boost_INCLUDE_DIRS})
 
-add_library( timestamp-cpp SHARED ${SOURCES} )
+aux_source_directory(. SOURCES)
 
-target_link_libraries( timestamp-cpp
-                       ${Boost_SYSTEM_LIBRARY}
-                      )
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
+
+target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_link_libraries(${PROJECT_NAME}
+                      ${CMAKE_THREAD_LIBS_INIT}
+                      ${Boost_LIBRARIES})
