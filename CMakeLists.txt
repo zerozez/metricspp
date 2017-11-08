@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(metricspp CXX)
+project(metricspp C CXX)
 
 option(BUILD_TESTS "Build unit tests for the library" OFF)
 
