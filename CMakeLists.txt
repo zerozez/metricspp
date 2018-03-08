@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(metricspp C CXX)
 
-option(BUILD_TESTS "Build unit tests for the library" OFF)
+option(BUILD_TESTS "Build unit tests for the library" Off)
+option(BUILD_EXAMPLE "Build Example application" Off)
 
 set(MAJOR_VER 0)
 set(MINOR_VER 1)
@@ -76,3 +77,8 @@ if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif()
+
+if(BUILD_EXAMPLE)
+    add_subdirectory(examples)
+endif()
+
