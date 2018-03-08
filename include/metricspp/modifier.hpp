@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Petr Orlov
+ * Copyright (c) 2017 Petr Orlov <zfmeze@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,32 @@
  * SOFTWARE.
  */
 
-#include <regex>
-#include <stdexcept>
+#ifndef L_METRICSPP_MODIFIER_HPP
+#define L_METRICSPP_MODIFIER_HPP
+
+#include <list>
+#include <memory>
 #include <string>
 
-#include <connection.hpp>
-#include <connection_types.hpp>
+namespace metricspp {
+class MetricsModifierPrivate;
+class MetricsModifier {
+ public:
+  MetricsModifier() = delete;
+  MetricsModifier(const std::string &measure,
+                  const std::initializer_list<std::string> &vqueue);
+  ~MetricsModifier();
 
-namespace timestamp {
-Connection::Connection(timestamp::ConnectionType type) : m_type(type) {}
+  std::string measure() const;
 
-Connection::~Connection() {}
+  std::list<std::string> queue() const;
 
-auto Connection::setAddress(const std::string &addr, const int port) -> void {
-  if (!std::regex_match(addr, std::regex(exp_ip)) &&
-      !std::regex_match(addr, std::regex(exp_addr))) {
-    throw std::invalid_argument("[Connection] address invalid : " + addr);
-  }
+  MetricsModifier(const MetricsModifier &cr);
+  MetricsModifier &operator=(const MetricsModifier &cr);
 
-  if (port < 0 || port > 65536) {
-    throw std::invalid_argument("[Connection] port invalid : " +
-                                std::to_string(port));
-  }
-
-  m_addr = addr;
-  m_port = port;
+ private:
+  const std::unique_ptr<MetricsModifierPrivate> m_data;
+};
 }
 
-auto timestamp::Connection::type() const -> ConnectionType { return m_type; }
-
-auto Connection::addr() const -> std::string { return m_addr; }
-
-auto Connection::port() const -> int { return m_port; }
-}
+#endif  // L_METRICSPP_MODIFIER_HPP
