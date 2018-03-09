@@ -16,7 +16,9 @@ endif()
 
 set (CMAKE_CXX_STANDARD 11)
 
-if(CMAKE_BUILD_TYPE MATCHES Debug)
+if(BUILD_TESTS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fprofile-arcs -ftest-coverage")
+elseif(CMAKE_BUILD_TYPE MATCHES Debug)
     if(MSVC)
         if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
             string(REGEX REPLACE "/W[0-4]" "/W4"
@@ -48,13 +50,17 @@ if(NOT CURL_FOUND)
     set(CURL_FOUND TRUE)
     set(CURL_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/lib/curl/include)
     set(CURL_LIBRARIES libcurl)
-
 endif()
 
 add_subdirectory(src)
 
 if(BUILD_TESTS)
     find_package(GTest)
+
+    if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    endif()
+
+    include_directories(src)
 
     if(NOT GTEST_FOUND)
         message(STATUS
@@ -67,7 +73,6 @@ if(BUILD_TESTS)
         set(GTEST_LIBRARIES gtest)
         set(GTEST_MAIN_LIBRARIES gtest_main)
         set(GTEST_BOTH_LIBRARIES gtest gtest_main)
-        set(GTEST_INCLUDE_DIRS ${gtest_SOURCE_DIR}/include)
 
         # Group under the "tests/gtest" project folder in IDEs such as Visual Studio.
         set_property(TARGET gtest PROPERTY FOLDER "tests/gtest")

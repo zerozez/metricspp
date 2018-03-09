@@ -1,23 +1,57 @@
 language: cpp
 
-compiler:
-  - gcc
-
-before_script:
-  - mkdir build
-  - cd build
-  - cmake ..
-
-install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-
-script: make
+sudo : false
 
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
     packages:
-      - gcc-4.8
-      - g++-4.8
       - cmake
+
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-4.9
+            - g++-4.9
+      env:
+        - CC_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+      before_script:
+        - pip install --user cpp-coveralls
+      after_success:
+        - coveralls -E ".*gtest.*" -E ".*CMakeFiles.*" --exclude lib --exclude test
+            --exclude examples --gcov-options '\-lp'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-7
+            - g++-7
+      env:
+        - CC_EVAL="CC=gcc-7 && CXX=g++-7"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env:
+        - CC_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+
+before_install:
+  - eval "${CC_EVAL}"
+  - cmake -DBUILD_TESTS=On .
+
+script:
+  - make
+  - make test
+
