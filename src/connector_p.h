@@ -16,8 +16,8 @@ class MetricsConnectorPrivate {
   virtual ~MetricsConnectorPrivate() {}
 
  private:
-  std::shared_ptr<NetworkConnector> m_connector;
-  std::map<std::string, std::string> m_tags;
+  std::shared_ptr<NetworkConnector> m_connector;  ///< Network object pointer
+  std::map<std::string, std::string> m_tags;      ///< Connector tags
 
   friend class MetricsConnector;
 };

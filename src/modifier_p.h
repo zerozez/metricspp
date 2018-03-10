@@ -11,8 +11,8 @@ class MetricsModifierPrivate {
   virtual ~MetricsModifierPrivate() {}
 
  private:
-  std::string m_measure;
-  std::list<std::string> m_queue;
+  std::string m_measure;           ///< Measure name
+  std::list<std::string> m_queue;  ///< Measure's variables queue
 
   friend class MetricsModifier;
 };
