@@ -4,15 +4,16 @@
 #include <list>
 #include <map>
 #include <memory>
-#include <mutex>
 #include <string>
+#include <unordered_map>
 
 namespace metricspp {
-class NetworkConnector;
+
+namespace base {
+class IConnector;
+}
 
 namespace _internal {
-class DataStreamPrivate;
-
 /** DataStream class
  *
  *      Stream class object returns as the temporary object from
@@ -20,6 +21,8 @@ class DataStreamPrivate;
  */
 class DataStream {
  public:
+  using value_storage = std::unordered_map<std::string, std::string>;
+
   DataStream() = delete;
 
   /** DataStream Constructor
@@ -30,7 +33,7 @@ class DataStream {
    * @param connector Pointer on a valid \a NetworkConnector object
    * @see NetworkConnector
    */
-  DataStream(const std::shared_ptr<NetworkConnector> &connector);
+  DataStream(const std::shared_ptr<base::IConnector> &connector);
   ~DataStream();
 
   /** Set Measure name method
@@ -56,7 +59,7 @@ class DataStream {
   void set_tags(const std::map<std::string, std::string> &tags);
 
   /** Insertion operator
-   *
+
    *    Inserts name as a \a str for the next value which comes after the call.
    *
    * @param str Name of variable
@@ -83,11 +86,31 @@ class DataStream {
   DataStream &operator<<(unsigned value);
   DataStream &operator<<(long unsigned value);
 
-  DataStream(const DataStream &stream);
-  DataStream &operator=(const DataStream &in);
-
  private:
-  const std::unique_ptr<DataStreamPrivate> m_data;
+  /** Set net variable
+   *
+   *    Sets next variable field with serialized \a value
+   *
+   * @param value data as a string
+   */
+  void set_next(const std::string &value);
+
+  /** Format data method
+   *
+   *    Forms a string for send from set of variables,tags and the measure name.
+   *
+   * @return Formatted string
+   */
+  std::string form_data() const;
+
+  std::string m_previous;  ///< Previusly set variable name
+  std::string m_measure;   ///< Measure name
+  std::string m_tags;      ///< Measure tags
+
+  value_storage m_values;         ///< Measure values
+  value_storage::iterator m_pos;  ///< Current position of values fill procedure
+
+  std::shared_ptr<base::IConnector> m_connector;  ///< Network connector pointer
 };
 }
 }

@@ -1,106 +1,133 @@
-#include <metricspp/_internal/d_stream.h>
+#include <chrono>
+#include <sstream>
 
-#include "../networkconnector.h"
-#include "d_stream_p.h"
+#include <metricspp/_internal/d_stream.h>
+#include <metricspp/base/baseconnector.hpp>
 
 using namespace metricspp::_internal;
 
-DataStream::DataStream(const std::shared_ptr<NetworkConnector> &connector)
-    : m_data(new DataStreamPrivate()) {
-  m_data->m_connector = connector;
+DataStream::DataStream(const std::shared_ptr<base::IConnector> &connector) {
+  m_connector = connector;
 }
 
 DataStream::~DataStream() {
-  if (m_data->m_connector) {
-    m_data->m_connector->post(m_data->form_data());
+  if (m_connector) {
+    m_connector->post(form_data());
   }
 }
 
 void DataStream::set_measure(const std::string &measure) {
   if (!measure.empty()) {
-    m_data->m_measure = measure;
+    m_measure = measure;
   }
 }
 
 void DataStream::set_values_queue(const std::list<std::string> &queue) {
   for (auto &name : queue) {
-    m_data->m_values.emplace(std::make_pair(name, ""));
+    m_values.emplace(std::make_pair(name, ""));
   }
-  m_data->m_pos = m_data->m_values.begin();
+  m_pos = m_values.begin();
 }
 
 void DataStream::set_tags(const std::map<std::string, std::string> &tags) {
-  m_data->m_tags.clear();
+  m_tags.clear();
 
   for (auto tag = tags.cbegin(); tag != tags.cend(); ++tag) {
-    m_data->m_tags += tag->first + "=" + tag->second +
-                      (std::next(tag) == tags.cend() ? "" : ",");
+    m_tags += tag->first + "=" + tag->second +
+              (std::next(tag) == tags.cend() ? "" : ",");
   }
 }
 
 DataStream &DataStream::operator<<(const std::string &str) {
-  if (m_data->m_previous.empty()) {
-    m_data->m_previous = str;
+  if (m_previous.empty()) {
+    m_previous = str;
 
-    if (m_data->m_values.find(str) == m_data->m_values.end()) {
-      m_data->m_values.emplace(std::make_pair(str, ""));
+    if (m_values.find(str) == m_values.end()) {
+      m_values.emplace(std::make_pair(str, ""));
     }
   }
   return *this;
 }
 
 DataStream &DataStream::operator<<(bool value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(short value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(float value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(double value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(long double value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(int value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(long int value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(unsigned value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(long unsigned value) {
-  m_data->set_next(std::to_string(value));
+  set_next(std::to_string(value));
   return *this;
 }
 
-DataStream::DataStream(const DataStream &stream) : DataStream(nullptr) {
-  this->operator=(stream);
-}
-
-DataStream &DataStream::operator=(const DataStream &in) {
-  if (&in != this) {
-    *m_data = *in.m_data;
+void DataStream::set_next(const std::string &value) {
+  if (!m_previous.empty()) {
+    m_values[m_previous] = value;
+    m_previous.clear();
+    return;
   }
-  return *this;
+
+  if (m_pos != m_values.end()) {
+    if (m_pos->second.empty()) {
+      m_pos->second = value;
+    }
+    ++m_pos;
+  }
+}
+
+std::string DataStream::form_data() const {
+  std::stringstream out;
+  out << m_measure << (m_tags.empty() ? "" : ",") << m_tags << " ";
+
+  bool first = true;
+  for (auto value = m_values.cbegin(); value != m_values.cend(); ++value) {
+    if (!value->second.empty()) {
+      out << (first ? "" : ",") << value->first << "=" << value->second;
+
+      if (first) {
+        first = false;
+      }
+    }
+  }
+
+  out << " "
+      << std::chrono::nanoseconds(
+             std::chrono::system_clock::now().time_since_epoch())
+             .count();
+
+  return out.str();
 }

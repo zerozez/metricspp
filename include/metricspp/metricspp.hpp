@@ -3,7 +3,8 @@
 
 #include <string>
 
-#include "connector.hpp"
+#include "base/baseconnector.hpp"
+#include "metric.hpp"
 #include "modifier.hpp"
 
 // \brief Library namespace
@@ -34,13 +35,10 @@ namespace metricspp {
  *  @param tags Tags for additional information in db
  *  @return MetrcsConnector object
  */
-MetricsConnector create_connection(const std::string &addr,
-                                   const std::initializer_list<Tag> &tags = {});
-
-template <class... Tags>
-MetricsConnector create_connection(const std::string &addr,
+template <class Connector, class... Tags>
+MetricsConnector create_connection(const std::shared_ptr<Connector> &connector,
                                    const Tags... tags) {
-  return create_connection(addr, {tags...});
+  return metricspp::MetricsConnector(connector, {tags...});
 }
 
 /** Create Measurement Modificator Function
@@ -64,14 +62,10 @@ MetricsConnector create_connection(const std::string &addr,
  *  @return MetricsModifier object
  *
  */
-MetricsModifier create_measurement(
-    const std::string &name,
-    const std::initializer_list<std::string> &vnames = {});
-
 template <class... Fields>
 MetricsModifier create_measurement(const std::string &name,
                                    const Fields &... vnames) {
-  return create_measurement(name, {vnames...});
+  return MetricsModifier(name, {vnames...});
 }
 }
 

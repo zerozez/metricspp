@@ -1,9 +1,11 @@
-#include "networkconnector.h"
+#include <metricspp/httpconnector.hpp>
+
+#include <curl/curl.h>
 
 using namespace metricspp;
 
-NetworkConnector::NetworkConnector(const std::string &addr)
-    : m_addr(addr), m_handle(NULL) {
+HttpConnector::HttpConnector()
+    : m_error(CURL_ERROR_SIZE, '\0'), m_handle(NULL) {
   m_handle = curl_easy_init();
 
   if (m_handle) {
@@ -14,7 +16,7 @@ NetworkConnector::NetworkConnector(const std::string &addr)
     curl_easy_setopt(m_handle, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(m_handle, CURLOPT_NOPROGRESS, 1L);
     curl_easy_setopt(m_handle, CURLOPT_MAXREDIRS, 50L);
-    curl_easy_setopt(m_handle, CURLOPT_ERRORBUFFER, m_error);
+    curl_easy_setopt(m_handle, CURLOPT_ERRORBUFFER, m_error.data());
     curl_easy_setopt(m_handle, CURLOPT_COOKIEFILE, "");
     curl_easy_setopt(m_handle, CURLOPT_NOSIGNAL, 1L);
     curl_easy_setopt(m_handle, CURLOPT_TIMEOUT_MS, 1000);
@@ -26,16 +28,18 @@ NetworkConnector::NetworkConnector(const std::string &addr)
 #endif
 #endif
 #endif
-
-    curl_easy_setopt(m_handle, CURLOPT_URL, m_addr.c_str());
   }
 }
 
-NetworkConnector::~NetworkConnector() {
+HttpConnector::HttpConnector(const std::string &addr) : HttpConnector() {
+  set_address(addr);
+}
+
+HttpConnector::~HttpConnector() {
   curl_easy_cleanup(m_handle);
 }
 
-bool NetworkConnector::post(const std::string &data) {
+bool HttpConnector::post(const std::string &data) {
   if (m_handle == NULL) {
     return false;
   }
@@ -47,4 +51,13 @@ bool NetworkConnector::post(const std::string &data) {
   }
 
   return false;
+}
+
+void HttpConnector::set_address(const std::string &addr) {
+  m_addr = addr;
+  curl_easy_setopt(m_handle, CURLOPT_URL, addr.c_str());
+}
+
+std::string HttpConnector::address() const {
+  return m_addr;
 }

@@ -23,12 +23,15 @@
  * SOFTWARE.
  */
 
+#include <metricspp/httpconnector.hpp>
 #include <metricspp/metricspp.hpp>
 
 int main(int argc, char** argv) {
-  auto ms = metricspp::create_connection("http://127.0.0.1:8086/write?db=test",
-                                         metricspp::Tag{"server", "server01"},
-                                         metricspp::Tag{"region", "eu-east"});
+  auto ms =
+      metricspp::create_connection(std::make_shared<metricspp::HttpConnector>(
+                                       "http://127.0.0.1:8086/write?db=test"),
+                                   metricspp::Tag{"server", "server01"},
+                                   metricspp::Tag{"region", "eu-east"});
 
   // Simple usage with different measurements
   ms << "eth0" << 53;
