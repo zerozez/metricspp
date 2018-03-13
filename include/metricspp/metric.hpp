@@ -33,9 +33,10 @@ class MetricsConnector {
    *
    *    Specified class constructor for the class' object with \a connector
    *    as access point, through all data will flow, and list of \a tags for
-   *    future usage
+   *    future usage. Tags must only contain letters and/or numbers without
    *
-   * @param connector
+   * @param connector Shared pointer to connector. If pointer is invalid,
+   *    invalid_argument will be throw as exception
    * @param tags List of usable tags
    * @see base::IConnector
    *
@@ -44,6 +45,14 @@ class MetricsConnector {
                    std::initializer_list<Tag> tags = {});
 
   virtual ~MetricsConnector();
+
+  /** Get Metric Tags
+   *
+   *    Returns tags and values for this metric.
+   *
+   * @return map of tags
+   */
+  std::map<std::string, std::string> tags() const;
 
   /** Insertion Operator
    *
@@ -83,6 +92,8 @@ class MetricsConnector {
  private:
   std::shared_ptr<base::IConnector> m_connector;  // Network Connector
   std::map<std::string, std::string> m_tags;      // Measurement tags
+
+  bool is_valid(const std::string &input) const;
 };
 }
 

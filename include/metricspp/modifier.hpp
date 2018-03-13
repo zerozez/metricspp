@@ -31,7 +31,7 @@ class MetricsModifier {
    *        as it comes in.
    */
   MetricsModifier(const std::string &measure,
-                  const std::initializer_list<std::string> &vqueue);
+                  const std::initializer_list<std::string> &vqueue = {});
   virtual ~MetricsModifier();
 
   /** Measure method
