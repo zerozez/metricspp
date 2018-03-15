@@ -1,3 +1,5 @@
+#include <regex>
+
 #include <metricspp/httpconnector.hpp>
 
 #include <curl/curl.h>
@@ -40,7 +42,7 @@ HttpConnector::~HttpConnector() {
 }
 
 bool HttpConnector::post(const std::string &data) {
-  if (m_handle == NULL) {
+  if (m_handle == NULL || m_addr.empty()) {
     return false;
   }
 
@@ -54,6 +56,13 @@ bool HttpConnector::post(const std::string &data) {
 }
 
 void HttpConnector::set_address(const std::string &addr) {
+  const static std::regex rx_url(
+      "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)*[\\w\\-\\._~:/"
+      "?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$");
+  if (!std::regex_match(addr, rx_url)) {
+    throw std::invalid_argument("Input address is not valid");
+  }
+
   m_addr = addr;
   curl_easy_setopt(m_handle, CURLOPT_URL, addr.c_str());
 }
