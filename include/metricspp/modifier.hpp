@@ -31,8 +31,8 @@ class MetricsModifier {
    *        as it comes in.
    */
   MetricsModifier(const std::string &measure,
-                  const std::initializer_list<std::string> &vqueue);
-  ~MetricsModifier();
+                  const std::initializer_list<std::string> &vqueue = {});
+  virtual ~MetricsModifier();
 
   /** Measure method
    *
@@ -50,11 +50,9 @@ class MetricsModifier {
    */
   std::list<std::string> queue() const;
 
-  MetricsModifier(const MetricsModifier &cr);
-  MetricsModifier &operator=(const MetricsModifier &cr);
-
  private:
-  const std::unique_ptr<MetricsModifierPrivate> m_data;
+  std::string m_measure;           ///< Measure name
+  std::list<std::string> m_queue;  ///< Measure's variables queue
 };
 }
 

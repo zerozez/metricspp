@@ -1,10 +1,12 @@
 #ifndef L_METRICSPP_CONNECTOR_HPP
 #define L_METRICSPP_CONNECTOR_HPP
 
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
 
+#include "base/baseconnector.hpp"
 #include "modifier.hpp"
 
 #include "_internal/d_stream.h"
@@ -14,15 +16,14 @@ namespace metricspp {
 
 using Tag = std::pair<std::string, std::string>;
 
-class MetricsModifier;
-class MetricsConnectorPrivate;
-
 /** MetricsConnector class
  *
  *      General working class. Object of this class primary uses for
  *      sending metrics in series databases. Can be extended with different
  *      tags if database has it support. They will be attached to every
  *      database commit.
+ *
+ *      Connector must be based on IConnector
  */
 class MetricsConnector {
  public:
@@ -30,18 +31,28 @@ class MetricsConnector {
 
   /** MetricsConnector constructor
    *
-   *    Specified class constructor for the class' object with \a addr
-   *    as address of specified API and list of \a tags for future
-   *    usage
+   *    Specified class constructor for the class' object with \a connector
+   *    as access point, through all data will flow, and list of \a tags for
+   *    future usage. Tags must only contain letters and/or numbers without
    *
-   * @param addr Full API address
+   * @param connector Shared pointer to connector. If pointer is invalid,
+   *    invalid_argument will be throw as exception
    * @param tags List of usable tags
+   * @see base::IConnector
    *
    */
-  MetricsConnector(const std::string &addr,
-                   const std::initializer_list<Tag> &tags = {});
+  MetricsConnector(const std::shared_ptr<base::IConnector> &connector,
+                   std::initializer_list<Tag> tags = {});
 
-  ~MetricsConnector();
+  virtual ~MetricsConnector();
+
+  /** Get Metric Tags
+   *
+   *    Returns tags and values for this metric.
+   *
+   * @return map of tags
+   */
+  std::map<std::string, std::string> tags() const;
 
   /** Insertion Operator
    *
@@ -78,11 +89,9 @@ class MetricsConnector {
    */
   _internal::DataStream operator<<(const std::string &str);
 
-  MetricsConnector(const MetricsConnector &cr);
-  MetricsConnector &operator=(const MetricsConnector &cr);
-
  private:
-  const std::unique_ptr<metricspp::MetricsConnectorPrivate> m_data;
+  std::shared_ptr<base::IConnector> m_connector;  // Network Connector
+  std::map<std::string, std::string> m_tags;      // Measurement tags
 };
 }
 

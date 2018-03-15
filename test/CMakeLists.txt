@@ -5,12 +5,13 @@ if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER_EQUAL 3.9)
     include(GoogleTest)
 endif()
 
-include_directories(${GTEST_INCLUDE_DIRS})
+include_directories(${CURL_INCLUDE_DIRS})
 
 aux_source_directory(. SOURCE)
 add_executable(${PROJECT_NAME}.test ${SOURCE})
 
 target_link_libraries(${PROJECT_NAME}.test ${PROJECT_NAME}
-                                           ${GTEST_BOTH_LIBRARIES})
+                                           ${GTEST_BOTH_LIBRARIES}
+                                           gmock)
 
 gtest_add_tests(${PROJECT_NAME}.test "" ${SOURCE})

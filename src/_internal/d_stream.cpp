@@ -1,106 +1,167 @@
-#include <metricspp/_internal/d_stream.h>
+#include <algorithm>
+#include <chrono>
+#include <map>
+#include <sstream>
 
-#include "../networkconnector.h"
-#include "d_stream_p.h"
+#include <metricspp/_internal/d_stream.h>
+#include <metricspp/base/baseconnector.hpp>
+
+#include "../funcollection.h"
 
 using namespace metricspp::_internal;
 
-DataStream::DataStream(const std::shared_ptr<NetworkConnector> &connector)
-    : m_data(new DataStreamPrivate()) {
-  m_data->m_connector = connector;
+DataStream::DataStream(const std::shared_ptr<base::IConnector> &connector)
+    : m_connector(connector), m_pos(m_values.end()) {
+  if (!connector) {
+    throw std::invalid_argument("Input connector pointer is invalid");
+  }
 }
 
 DataStream::~DataStream() {
-  if (m_data->m_connector) {
-    m_data->m_connector->post(m_data->form_data());
+  if (m_connector) {
+    auto data = form_data();
+    if (!data.empty()) {
+      m_connector->post(data);
+    }
   }
 }
 
 void DataStream::set_measure(const std::string &measure) {
-  if (!measure.empty()) {
-    m_data->m_measure = measure;
+  if (is_var_valid(measure)) {
+    m_measure = measure;
   }
 }
 
 void DataStream::set_values_queue(const std::list<std::string> &queue) {
+  m_values.clear();
+
   for (auto &name : queue) {
-    m_data->m_values.emplace(std::make_pair(name, ""));
+    if (is_var_valid(name)) {
+      set_record(name, "");
+    }
   }
-  m_data->m_pos = m_data->m_values.begin();
+  m_pos = m_values.begin();
 }
 
 void DataStream::set_tags(const std::map<std::string, std::string> &tags) {
-  m_data->m_tags.clear();
+  m_tags.clear();
 
   for (auto tag = tags.cbegin(); tag != tags.cend(); ++tag) {
-    m_data->m_tags += tag->first + "=" + tag->second +
-                      (std::next(tag) == tags.cend() ? "" : ",");
+    if (is_var_valid(tag->first) && is_var_valid(tag->second)) {
+      m_tags += tag->first + "=" + tag->second +
+                (std::next(tag) == tags.cend() ? "" : ",");
+    }
   }
 }
 
 DataStream &DataStream::operator<<(const std::string &str) {
-  if (m_data->m_previous.empty()) {
-    m_data->m_previous = str;
-
-    if (m_data->m_values.find(str) == m_data->m_values.end()) {
-      m_data->m_values.emplace(std::make_pair(str, ""));
-    }
+  if (is_var_valid(str)) {
+    m_previous = str;
   }
   return *this;
 }
 
+DataStream &DataStream::operator<<(const char *data) {
+  return this->operator<<(std::string(data));
+}
+
 DataStream &DataStream::operator<<(bool value) {
-  m_data->set_next(std::to_string(value));
+  set_next(to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(short value) {
-  m_data->set_next(std::to_string(value));
-  return *this;
-}
-
-DataStream &DataStream::operator<<(float value) {
-  m_data->set_next(std::to_string(value));
+  set_next(to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(double value) {
-  m_data->set_next(std::to_string(value));
+  set_next(to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(long double value) {
-  m_data->set_next(std::to_string(value));
+  set_next(to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(int value) {
-  m_data->set_next(std::to_string(value));
+  set_next(to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(long int value) {
-  m_data->set_next(std::to_string(value));
+  set_next(to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(unsigned value) {
-  m_data->set_next(std::to_string(value));
+  set_next(to_string(value));
   return *this;
 }
 
 DataStream &DataStream::operator<<(long unsigned value) {
-  m_data->set_next(std::to_string(value));
+  set_next(to_string(value));
   return *this;
 }
 
-DataStream::DataStream(const DataStream &stream) : DataStream(nullptr) {
-  this->operator=(stream);
-}
-
-DataStream &DataStream::operator=(const DataStream &in) {
-  if (&in != this) {
-    *m_data = *in.m_data;
+void DataStream::set_next(const std::string &value) {
+  if (!m_previous.empty()) {
+    set_record(m_previous, value);
+    m_previous.clear();
+    return;
   }
-  return *this;
+
+  if (m_pos != m_values.end()) {
+    if (m_pos->second.empty()) {
+      m_pos->second = value;
+    }
+    ++m_pos;
+  }
+}
+
+void DataStream::set_record(const std::string &name, const std::string &value) {
+  auto pos = std::find_if(
+      m_values.begin(), m_values.end(),
+      [name](const value_storage::value_type &it) { return it.first == name; });
+
+  if (pos == m_values.end()) {
+    m_values.emplace_back(std::make_pair(name, value));
+  } else {
+    (pos->second = value);
+  }
+}
+
+std::string DataStream::form_data() const {
+  std::stringstream out;
+
+  // No need to send somthing if name is empty or it values
+  if (m_measure.empty() || m_values.empty()) {
+    return "";
+  }
+
+  out << m_measure << (m_tags.empty() ? "" : ",") << m_tags << " ";
+
+  bool first = true;
+  for (auto value = m_values.cbegin(); value != m_values.cend(); ++value) {
+    if (!value->second.empty()) {
+      out << (first ? "" : ",") << value->first << "=" << value->second;
+
+      if (first) {
+        first = false;
+      }
+    }
+  }
+
+  // No need to send somthing if we put nothing as a value
+  if (first) {
+    return "";
+  }
+
+  out << " "
+      << std::chrono::nanoseconds(
+             std::chrono::system_clock::now().time_since_epoch())
+             .count();
+
+  return out.str();
 }
