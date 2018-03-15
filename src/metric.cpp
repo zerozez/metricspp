@@ -4,6 +4,8 @@
 
 #include <metricspp/metric.hpp>
 
+#include "funcollection.h"
+
 using namespace metricspp;
 
 MetricsConnector::MetricsConnector(
@@ -15,7 +17,7 @@ MetricsConnector::MetricsConnector(
   }
 
   std::for_each(tags.begin(), tags.end(), [&](const Tag &tag) {
-    if (is_valid(tag.first) && is_valid(tag.second) &&
+    if (is_var_valid(tag.first) && is_var_valid(tag.second) &&
         m_tags.find(tag.first) == m_tags.end()) {
       m_tags.emplace(tag);
     }
@@ -39,13 +41,8 @@ _internal::DataStream MetricsConnector::operator<<(const MetricsModifier &mod) {
 }
 
 _internal::DataStream MetricsConnector::operator<<(const std::string &str) {
-  if (!is_valid(str)) {
+  if (!is_var_valid(str)) {
     throw std::invalid_argument("Input measure name is not valid!");
   }
   return operator<<(MetricsModifier(str, {}));
-}
-
-bool MetricsConnector::is_valid(const std::string &input) const {
-  static const std::regex tag_regex("^[\\w\\.]+$");
-  return std::regex_match(input, tag_regex);
 }

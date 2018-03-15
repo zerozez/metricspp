@@ -92,8 +92,6 @@ class MetricsConnector {
  private:
   std::shared_ptr<base::IConnector> m_connector;  // Network Connector
   std::map<std::string, std::string> m_tags;      // Measurement tags
-
-  bool is_valid(const std::string &input) const;
 };
 }
 
