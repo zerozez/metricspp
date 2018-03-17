@@ -18,9 +18,10 @@ class HttpConnector : public base::IConnector {
   /** HttpConnector constructor
    *
    *     Constructor creates a new object with an \a addr to communicate
-   *     with
+   *     with.
    *
-   * @param addr Database address
+   * @param addr Database address. Address must be valid http address otherwise
+   *    it throw std::invalid_argument exception.
    */
   HttpConnector(const std::string &addr);
 
@@ -39,9 +40,9 @@ class HttpConnector : public base::IConnector {
 
   /** Set adress
    *
-   *    Set new database address
+   *    Set new database address. Acts like if in constructor pass an address
    *
-   * @param addr Domain name or ip address as a string
+   * @param addr Valid server address.
    */
   void set_address(const std::string &addr);
 

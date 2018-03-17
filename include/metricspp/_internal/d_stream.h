@@ -30,7 +30,8 @@ class DataStream {
    *    Creates new object with \a connector as communication pipe over which
    *    it sends formatted data.
    *
-   * @param connector Pointer on a valid \a NetworkConnector object
+   * @param connector Pointer on a valid \a NetworkConnector object. If
+   *    it is invalid, it throws std::invalid_argument exception
    * @see NetworkConnector
    */
   DataStream(const std::shared_ptr<base::IConnector> &connector);

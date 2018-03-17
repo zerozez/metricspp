@@ -37,7 +37,7 @@ class MetricsConnector {
    *
    * @param connector Shared pointer to connector. If pointer is invalid,
    *    invalid_argument will be throw as exception
-   * @param tags List of usable tags
+   * @param tags List of usable tags. Invalid tags filter at the beginning.
    * @see base::IConnector
    *
    */
@@ -82,7 +82,8 @@ class MetricsConnector {
    *    All future insertion go into _internal::DataStream as regular
    *    values.
    *
-   * @param str Stored variable name
+   * @param str Name of variable. Invalid name of measure leads to throwing
+   *    std::invalid_argument exception
    * @see _internal::DataStream
    *
    * @return Temporary DataStream object of current data stream

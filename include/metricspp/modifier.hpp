@@ -26,6 +26,9 @@ class MetricsModifier {
    *    variable names queue. If vqueue is empty it will add default `value`
    *    name in the list.
    *
+   *    Pass in invalid measure or variables names leads to throwing
+   *    std::invalid_argument
+   *
    * @param measure Measurement name
    * @param vqueue List of measurement's variables. Order of them keeps the same
    *        as it comes in.
