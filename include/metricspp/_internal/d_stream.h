@@ -81,6 +81,7 @@ class DataStream {
   DataStream &operator<<(bool value);
   DataStream &operator<<(short value);
   DataStream &operator<<(double value);
+  DataStream &operator<<(float value);
   DataStream &operator<<(long double value);
   DataStream &operator<<(int value);
   DataStream &operator<<(long int value);

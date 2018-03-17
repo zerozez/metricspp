@@ -80,6 +80,11 @@ DataStream &DataStream::operator<<(double value) {
   return *this;
 }
 
+DataStream &DataStream::operator<<(float value) {
+  set_next(to_string(value));
+  return *this;
+}
+
 DataStream &DataStream::operator<<(long double value) {
   set_next(to_string(value));
   return *this;
