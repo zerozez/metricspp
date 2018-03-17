@@ -154,17 +154,18 @@ TEST_F(DataStreamTest, SetQueue) {
 TEST_F(DataStreamTest, Insertion) {
   test_ouput([&](const std::shared_ptr<DataStream> &st,
                  const std::shared_ptr<ConnectorMock> &cn) {
-    EXPECT_CALL(
-        *cn,
-        post(StartsWith(measure + " value0=1,value2=5.55,value5=1,value10=-0."
-                                  "4441,value12=0,value13=2,value14=3.3,"
-                                  "value15=-15,value16=20,value17=12345678 ")));
+    EXPECT_CALL(*cn,
+                post(StartsWith(
+                    measure +
+                    " value0=1,value2=5.55,value5=1,value10=-0."
+                    "4441,value12=0,value13=2,value14=3.3,"
+                    "value15=-15,value16=20,value17=12345678,value18=-3.44 ")));
     st->set_measure(measure);
     st->set_values_queue({"value0", "value2", "value5"});
     *st << 1 << 5.55 << true << "value10" << -0.4441 << "value11"
         << "value12" << 0 << "q<F10>N" << 5 << "value13" << short(2)
         << "value14" << (long double)(3.3) << "value15" << (long int)(-15)
-        << "value16" << (unsigned)(20) << "value17"
-        << (long unsigned)(12345678);
+        << "value16" << (unsigned)(20) << "value17" << (long unsigned)(12345678)
+        << "value18" << (float)(-3.44);
   });
 }
