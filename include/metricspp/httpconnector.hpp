@@ -23,7 +23,7 @@ class HttpConnector : public base::IConnector {
    * @param addr Database address. Address must be valid http address otherwise
    *    it throw std::invalid_argument exception.
    */
-  HttpConnector(const std::string &addr);
+  explicit HttpConnector(const std::string &addr);
 
   virtual ~HttpConnector();
 

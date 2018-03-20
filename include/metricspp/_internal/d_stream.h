@@ -34,8 +34,8 @@ class DataStream {
    *    it is invalid, it throws std::invalid_argument exception
    * @see NetworkConnector
    */
-  DataStream(const std::shared_ptr<base::IConnector> &connector);
-  ~DataStream();
+  explicit DataStream(const std::shared_ptr<base::IConnector> &connector);
+  virtual ~DataStream();
 
   /** Set Measure name method
    *
