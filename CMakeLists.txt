@@ -57,9 +57,6 @@ add_subdirectory(src)
 if(BUILD_TESTS)
     find_package(GTest)
 
-    if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    endif()
-
     include_directories(src)
 
     if(NOT GTEST_FOUND)
